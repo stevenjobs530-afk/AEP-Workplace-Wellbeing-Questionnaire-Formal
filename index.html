@@ -1,0 +1,1626 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>AEP Questionnaire Draft v6</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #5f6f7f;
+      --line: rgba(24, 38, 52, 0.14);
+      --line-strong: rgba(24, 38, 52, 0.24);
+      --surface: rgba(255, 255, 255, 0.9);
+      --soft: #f3f7fa;
+      --navy: #10283d;
+      --teal: #2f827a;
+      --teal-dark: #23665f;
+      --gold: #b5853f;
+      --danger: #b84b4b;
+      --shadow: 0 24px 70px rgba(16, 40, 61, 0.16);
+      --radius: 8px;
+      --focus: 0 0 0 4px rgba(47, 130, 122, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(47, 130, 122, 0.18), transparent 32rem),
+        linear-gradient(135deg, #10283d 0%, #243d52 38%, #edf3f6 38.2%, #f8fafb 100%);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+      letter-spacing: 0;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app-shell {
+      width: min(1180px, calc(100% - 32px));
+      min-height: 100vh;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 310px minmax(0, 1fr);
+      gap: 26px;
+      align-items: center;
+      padding: 34px 0;
+    }
+
+    .side-panel {
+      color: #f7fbfc;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 28px;
+      padding: 28px 0 28px 4px;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      color: #153044;
+      background: #f6f2e8;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+      font-weight: 800;
+    }
+
+    .side-panel h1 {
+      margin: 18px 0 14px;
+      max-width: 310px;
+      font-size: clamp(2.15rem, 3.5vw, 2.84rem);
+      line-height: 1.04;
+      font-weight: 760;
+    }
+
+    .side-panel p {
+      margin: 0;
+      max-width: 280px;
+      color: rgba(247, 251, 252, 0.78);
+      font-size: 0.98rem;
+      line-height: 1.65;
+    }
+
+    .side-metrics {
+      display: grid;
+      gap: 10px;
+      max-width: 280px;
+    }
+
+    .metric {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(16, 40, 61, 0.34);
+      border-radius: var(--radius);
+      backdrop-filter: blur(10px);
+    }
+
+    .metric span:first-child {
+      color: rgba(247, 251, 252, 0.72);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .metric span:last-child {
+      color: #fff;
+      font-weight: 720;
+    }
+
+    .questionnaire {
+      min-height: min(780px, calc(100vh - 68px));
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.64);
+      border-radius: 18px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar {
+      padding: 22px 26px 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.76);
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 15px;
+    }
+
+    .section-label {
+      color: var(--teal-dark);
+      font-size: 0.78rem;
+      font-weight: 760;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .step-count {
+      color: var(--muted);
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e5edf1;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), var(--gold));
+      transition: width 320ms ease;
+    }
+
+    .viewport {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100%;
+      padding: clamp(24px, 5vw, 46px);
+      animation: enter 300ms ease both;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes enter {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .screen-header {
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: clamp(1.7rem, 3vw, 2.55rem);
+      line-height: 1.05;
+      font-weight: 780;
+    }
+
+    h3 {
+      margin: 0 0 12px;
+      color: var(--navy);
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 26px 0;
+    }
+
+    .info-tile,
+    .note-card,
+    .question-block {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .info-tile {
+      padding: 16px;
+    }
+
+    .info-tile strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--navy);
+      font-size: 0.92rem;
+    }
+
+    .info-tile span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .note-card {
+      max-width: 760px;
+      padding: 18px;
+      border-color: rgba(181, 133, 63, 0.35);
+      background: rgba(255, 249, 238, 0.72);
+      color: #64513a;
+      line-height: 1.55;
+    }
+
+    .question-stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .question-block {
+      padding: 20px;
+    }
+
+    .question-title {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .question-title p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .mini-label {
+      min-width: max-content;
+      color: var(--teal-dark);
+      font-size: 0.75rem;
+      font-weight: 760;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .choice-grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .choice-card {
+      position: relative;
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(250, 252, 253, 0.92);
+      color: var(--ink);
+      transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+
+    .choice-card:hover {
+      transform: translateY(-1px);
+      border-color: var(--line-strong);
+      background: #fff;
+    }
+
+    .choice-card input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .control-mark {
+      flex: 0 0 auto;
+      width: 19px;
+      height: 19px;
+      border: 1.5px solid #9babba;
+      display: grid;
+      place-items: center;
+      background: #fff;
+    }
+
+    .radio .control-mark {
+      border-radius: 50%;
+    }
+
+    .checkbox .control-mark {
+      border-radius: 5px;
+    }
+
+    .control-mark::after {
+      content: "";
+      width: 9px;
+      height: 9px;
+      opacity: 0;
+      background: var(--teal);
+      transform: scale(0.7);
+      transition: opacity 140ms ease, transform 140ms ease;
+    }
+
+    .radio .control-mark::after {
+      border-radius: 50%;
+    }
+
+    .checkbox .control-mark::after {
+      width: 10px;
+      height: 7px;
+      border: 2px solid #fff;
+      border-top: 0;
+      border-right: 0;
+      background: transparent;
+      transform: translateY(-1px) rotate(-45deg) scale(0.7);
+    }
+
+    .choice-card:has(input:focus-visible) {
+      box-shadow: var(--focus);
+    }
+
+    .choice-card:has(input:checked) {
+      border-color: rgba(47, 130, 122, 0.65);
+      background: rgba(237, 248, 246, 0.95);
+      box-shadow: 0 12px 28px rgba(47, 130, 122, 0.12);
+    }
+
+    .choice-card:has(input:checked) .control-mark {
+      border-color: var(--teal);
+      background: var(--teal);
+    }
+
+    .choice-card:has(input:checked) .control-mark::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .choice-card.checkbox:has(input:checked) .control-mark::after {
+      transform: translateY(-1px) rotate(-45deg) scale(1);
+    }
+
+    .choice-text {
+      min-width: 0;
+      font-size: 0.96rem;
+      line-height: 1.35;
+    }
+
+    .likert-list {
+      display: grid;
+      gap: 0;
+      overflow: hidden;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .scale-note {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin: -6px 0 16px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 650;
+    }
+
+    .likert-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, auto);
+      gap: 0;
+      align-items: center;
+      border-top: 1px solid var(--line);
+      background: rgba(250, 252, 253, 0.92);
+    }
+
+    .likert-row:first-child {
+      border-top: 0;
+    }
+
+    .likert-statement {
+      padding: 16px;
+      border-right: 1px solid var(--line);
+    }
+
+    .item-code {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      height: 28px;
+      margin-bottom: 8px;
+      border-radius: 999px;
+      color: var(--teal-dark);
+      background: rgba(47, 130, 122, 0.1);
+      font-size: 0.78rem;
+      font-weight: 760;
+    }
+
+    .likert-row p {
+      margin: 0;
+      color: #273747;
+      line-height: 1.45;
+    }
+
+    .scale {
+      display: grid;
+      grid-template-columns: repeat(5, 42px);
+      overflow: hidden;
+      margin: 16px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .scale.has-na {
+      grid-template-columns: repeat(6, 42px);
+    }
+
+    .scale label {
+      position: relative;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-weight: 720;
+      border-left: 1px solid var(--line);
+      transition: color 150ms ease, background 150ms ease;
+    }
+
+    .scale label:first-child {
+      border-left: 0;
+    }
+
+    .scale input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .scale label:has(input:focus-visible) {
+      box-shadow: inset var(--focus);
+    }
+
+    .scale label:has(input:checked) {
+      color: #fff;
+      background: var(--teal);
+    }
+
+    textarea,
+    input[type="text"],
+    select {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    textarea {
+      min-height: 118px;
+      resize: vertical;
+      padding: 14px;
+      line-height: 1.55;
+    }
+
+    input[type="text"],
+    select {
+      min-height: 46px;
+      padding: 0 12px;
+    }
+
+    textarea:focus,
+    input[type="text"]:focus,
+    select:focus {
+      border-color: rgba(47, 130, 122, 0.72);
+      box-shadow: var(--focus);
+    }
+
+    .inline-other {
+      margin-top: 12px;
+      max-width: 420px;
+    }
+
+    .inline-other[hidden] {
+      display: none;
+    }
+
+    .rank-grid {
+      display: grid;
+      gap: 12px;
+      max-width: 640px;
+    }
+
+    .rank-row {
+      display: grid;
+      grid-template-columns: 80px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+    }
+
+    .rank-row span {
+      color: var(--navy);
+      font-weight: 760;
+    }
+
+    .helper {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .helper.warn {
+      color: var(--danger);
+      font-weight: 650;
+    }
+
+    .error-message {
+      min-height: 24px;
+      padding: 0 26px;
+      color: var(--danger);
+      font-size: 0.92rem;
+      font-weight: 650;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 26px 24px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .button-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 18px;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      font-weight: 760;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, border-color 160ms ease;
+    }
+
+    .btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      color: #fff;
+      background: var(--teal);
+      box-shadow: 0 12px 26px rgba(47, 130, 122, 0.22);
+    }
+
+    .btn.primary:hover {
+      background: var(--teal-dark);
+    }
+
+    .btn.secondary {
+      color: var(--navy);
+      border-color: var(--line-strong);
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .btn.ghost {
+      color: var(--muted);
+      background: transparent;
+    }
+
+    .thank-you {
+      display: grid;
+      min-height: 430px;
+      place-items: center;
+      text-align: center;
+    }
+
+    .thank-you-inner {
+      max-width: 680px;
+    }
+
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--teal);
+      box-shadow: 0 16px 36px rgba(47, 130, 122, 0.24);
+    }
+
+    .success-icon svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 940px) {
+      html {
+        background: linear-gradient(180deg, #10283d 0, #243d52 280px, #f8fafb 280px, #f8fafb 100%);
+      }
+
+      .app-shell {
+        width: min(100% - 24px, 760px);
+        grid-template-columns: 1fr;
+        align-items: start;
+        gap: 16px;
+        padding: 18px 0;
+      }
+
+      .side-panel {
+        min-height: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        padding: 10px 4px 0;
+      }
+
+      .side-panel h1 {
+        max-width: 640px;
+        margin-top: 14px;
+      }
+
+      .side-panel p {
+        max-width: 640px;
+      }
+
+      .side-metrics {
+        display: none;
+      }
+
+      .questionnaire {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar,
+      .actions,
+      .error-message {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .screen {
+        padding: 24px 18px;
+      }
+
+      .info-grid,
+      .choice-grid,
+      .choice-grid.three {
+        grid-template-columns: 1fr;
+      }
+
+      .question-title {
+        display: block;
+      }
+
+      .mini-label {
+        display: inline-block;
+        margin-top: 8px;
+      }
+
+      .likert-row {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .likert-statement {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .scale {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        margin: 0 16px 16px;
+      }
+
+      .scale.has-na {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .button-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .rank-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <aside class="side-panel" aria-label="Prototype overview">
+      <div>
+        <div class="brand-mark">AEP</div>
+        <h1>Early-Career Transition Questionnaire</h1>
+        <p>A polished interactive prototype for exploring job-search pressure, workplace connectedness, AI-related pressure, cross-cultural adjustment, and employer support needs.</p>
+      </div>
+      <div class="side-metrics" aria-label="Prototype facts">
+        <div class="metric"><span>Mode</span><span>Wizard demo</span></div>
+        <div class="metric"><span>Time</span><span>8-10 min</span></div>
+        <div class="metric"><span>Storage</span><span>None</span></div>
+      </div>
+    </aside>
+
+    <section class="questionnaire" aria-label="Questionnaire wizard">
+      <header class="topbar">
+        <div class="topline">
+          <div class="section-label" id="sectionLabel">Introduction</div>
+          <div class="step-count" id="stepCount">Step 1 of 7</div>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </header>
+
+      <div class="viewport">
+        <form id="questionnaireForm" novalidate>
+          <section class="screen active" data-step="intro" data-title="Introduction">
+            <div class="screen-header">
+              <h2>Questionnaire Draft v6</h2>
+              <p class="lead">This prototype presents a small enhancement of V5 for group discussion, with clearer attention to job-search pressure, workplace connectedness, and accessible employer support. It is not the final published version and has not yet been approved through the ethics process.</p>
+            </div>
+            <div class="info-grid">
+              <div class="info-tile">
+                <strong>Purpose</strong>
+                <span>Explore early-career transition challenges, job-search pressure, workplace connectedness, AI-related pressure, cross-cultural adjustment, and employer support needs.</span>
+              </div>
+              <div class="info-tile">
+                <strong>Methods note</strong>
+                <span>Captures participant perceptions and does not replace employer-practice mapping, which remains a separate desk-based research activity.</span>
+              </div>
+              <div class="info-tile">
+                <strong>Participation</strong>
+                <span>Participation is voluntary and anonymous. Questions can be skipped except where needed for routing.</span>
+              </div>
+              <div class="info-tile">
+                <strong>Ethics note</strong>
+                <span>Literature-informed exploratory mixed-methods questionnaire, not a validated psychological scale.</span>
+              </div>
+            </div>
+            <div class="note-card">
+              Literature-informed exploratory mixed-methods questionnaire, not a validated psychological scale. V6 lightly strengthens the V5 direction by adding clearer coverage of job-search pressure, belonging and connectedness, and knowing how to access support. The data would be used only for an AEP research draft, subject to supervisor and ethics approval before any formal release. Before any formal release, this questionnaire would need to be aligned with the approved participant information sheet and consent process, including information about the research team, data handling, anonymous quote use, withdrawal rights, support contacts, and wellbeing-related sensitivity. Prototype only: no submit, no storage.
+            </div>
+          </section>
+
+          <section class="screen" data-step="a" data-title="Section A">
+            <div class="screen-header">
+              <h2>Consent and screening</h2>
+              <p class="lead">These questions establish consent and route each participant to the most relevant version of the transition questions.</p>
+            </div>
+            <div class="question-stack">
+              <div class="question-block" data-required-group="consent">
+                <div class="question-title">
+                  <div>
+                    <h3>A1. I have read the information above and agree to take part in this questionnaire.</h3>
+                    <p>Consent is required to continue into the questionnaire path.</p>
+                  </div>
+                  <span class="mini-label">Required</span>
+                </div>
+                <div class="choice-grid">
+                  <label class="choice-card radio">
+                    <input type="radio" name="consent" value="agree">
+                    <span class="control-mark"></span>
+                    <span class="choice-text">I agree and wish to continue</span>
+                  </label>
+                  <label class="choice-card radio">
+                    <input type="radio" name="consent" value="exit">
+                    <span class="control-mark"></span>
+                    <span class="choice-text">I do not agree and wish to exit</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="question-block" data-required-group="situation">
+                <div class="question-title">
+                  <div>
+                    <h3>A2. Which of the following best describes your current situation?</h3>
+                    <p>Your answer determines whether Section B1 or Section B2 appears next.</p>
+                  </div>
+                  <span class="mini-label">Required</span>
+                </div>
+                <div class="choice-grid">
+                  <label class="choice-card radio">
+                    <input type="radio" name="situation" value="student">
+                    <span class="control-mark"></span>
+                    <span class="choice-text">Current student, not yet in full-time employment</span>
+                  </label>
+                  <label class="choice-card radio">
+                    <input type="radio" name="situation" value="recent">
+                    <span class="control-mark"></span>
+                    <span class="choice-text">Recent graduate, currently job-seeking or about to start work</span>
+                  </label>
+                  <label class="choice-card radio">
+                    <input type="radio" name="situation" value="professional">
+                    <span class="control-mark"></span>
+                    <span class="choice-text">Graduated within the last 0-3 years, with work, internship, or graduate role experience</span>
+                  </label>
+                  <label class="choice-card radio">
+                    <input type="radio" name="situation" value="none">
+                    <span class="control-mark"></span>
+                    <span class="choice-text">None of the above</span>
+                  </label>
+                </div>
+                <p class="helper" id="branchHint">Choose a situation to see the next section.</p>
+              </div>
+
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>A3. What is your graduation year, or expected graduation year?</h3>
+                    <p>Select one option. This field is optional in the prototype.</p>
+                  </div>
+                </div>
+                <div class="choice-grid">
+                  <label class="choice-card radio"><input type="radio" name="graduation_year" value="2024 or earlier"><span class="control-mark"></span><span class="choice-text">2024 or earlier</span></label>
+                  <label class="choice-card radio"><input type="radio" name="graduation_year" value="2025"><span class="control-mark"></span><span class="choice-text">2025</span></label>
+                  <label class="choice-card radio"><input type="radio" name="graduation_year" value="2026"><span class="control-mark"></span><span class="choice-text">2026</span></label>
+                  <label class="choice-card radio"><input type="radio" name="graduation_year" value="2027 or later"><span class="control-mark"></span><span class="choice-text">2027 or later</span></label>
+                  <label class="choice-card radio"><input type="radio" name="graduation_year" value="Prefer not to say"><span class="control-mark"></span><span class="choice-text">Prefer not to say</span></label>
+                </div>
+              </div>
+
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>A4. What is your current employment status?</h3>
+                    <p>Select one option. This field is optional in the prototype.</p>
+                  </div>
+                </div>
+                <div class="choice-grid">
+                  <label class="choice-card radio"><input type="radio" name="employment_status" value="Not currently employed and looking for work"><span class="control-mark"></span><span class="choice-text">Not currently employed and looking for work</span></label>
+                  <label class="choice-card radio"><input type="radio" name="employment_status" value="Not currently employed and not currently looking for work"><span class="control-mark"></span><span class="choice-text">Not currently employed and not currently looking for work</span></label>
+                  <label class="choice-card radio"><input type="radio" name="employment_status" value="Part-time work"><span class="control-mark"></span><span class="choice-text">Part-time work</span></label>
+                  <label class="choice-card radio"><input type="radio" name="employment_status" value="Internship / placement / temporary role"><span class="control-mark"></span><span class="choice-text">Internship / placement / temporary role</span></label>
+                  <label class="choice-card radio"><input type="radio" name="employment_status" value="Full-time work / graduate role"><span class="control-mark"></span><span class="choice-text">Full-time work / graduate role</span></label>
+                  <label class="choice-card radio"><input type="radio" name="employment_status" value="Self-employed / freelance"><span class="control-mark"></span><span class="choice-text">Self-employed / freelance</span></label>
+                  <label class="choice-card radio"><input type="radio" name="employment_status" value="Prefer not to say"><span class="control-mark"></span><span class="choice-text">Prefer not to say</span></label>
+                  <label class="choice-card radio"><input type="radio" name="employment_status" value="Other"><span class="control-mark"></span><span class="choice-text">Other</span></label>
+                </div>
+                <input class="inline-other" type="text" name="employment_other" aria-label="Other employment status" placeholder="Other employment status">
+              </div>
+
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>A5. Which industry or field are you currently in, or expecting to enter?</h3>
+                    <p>Select any that apply. This field is optional in the prototype.</p>
+                  </div>
+                </div>
+                <div class="choice-grid three">
+                  <label class="choice-card checkbox"><input type="checkbox" name="industry" value="Business / Management / Consulting"><span class="control-mark"></span><span class="choice-text">Business / Management / Consulting</span></label>
+                  <label class="choice-card checkbox"><input type="checkbox" name="industry" value="Finance / Accounting"><span class="control-mark"></span><span class="choice-text">Finance / Accounting</span></label>
+                  <label class="choice-card checkbox"><input type="checkbox" name="industry" value="Technology / Data / Digital"><span class="control-mark"></span><span class="choice-text">Technology / Data / Digital</span></label>
+                  <label class="choice-card checkbox"><input type="checkbox" name="industry" value="Marketing / HR / Operations"><span class="control-mark"></span><span class="choice-text">Marketing / HR / Operations</span></label>
+                  <label class="choice-card checkbox"><input type="checkbox" name="industry" value="Healthcare / Education / Public sector"><span class="control-mark"></span><span class="choice-text">Healthcare / Education / Public sector</span></label>
+                  <label class="choice-card checkbox"><input type="checkbox" name="industry" value="Prefer not to say"><span class="control-mark"></span><span class="choice-text">Prefer not to say</span></label>
+                  <label class="choice-card checkbox"><input type="checkbox" name="industry" value="Other / Not sure"><span class="control-mark"></span><span class="choice-text">Other / Not sure</span></label>
+                </div>
+                <input class="inline-other" type="text" name="industry_other" aria-label="Other industry or field" placeholder="Other / Not sure">
+              </div>
+
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>A6. Are you currently working, applying, or expecting to work in a country/region different from where you mainly studied or grew up?</h3>
+                    <p>Select one option. This field helps interpret cross-cultural transition items.</p>
+                  </div>
+                </div>
+                <div class="choice-grid">
+                  <label class="choice-card radio"><input type="radio" name="cross_cultural_transition" value="Yes"><span class="control-mark"></span><span class="choice-text">Yes</span></label>
+                  <label class="choice-card radio"><input type="radio" name="cross_cultural_transition" value="No"><span class="control-mark"></span><span class="choice-text">No</span></label>
+                  <label class="choice-card radio"><input type="radio" name="cross_cultural_transition" value="Maybe / not sure"><span class="control-mark"></span><span class="choice-text">Maybe / not sure</span></label>
+                  <label class="choice-card radio"><input type="radio" name="cross_cultural_transition" value="Prefer not to say"><span class="control-mark"></span><span class="choice-text">Prefer not to say</span></label>
+                </div>
+              </div>
+
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>A7. To what extent have AI or digital tools affected, or do you expect them to affect, your job search or early-career role?</h3>
+                    <p>Select one option. AI is treated as a broad workplace and recruitment issue, not only a technology-sector issue.</p>
+                  </div>
+                </div>
+                <div class="choice-grid">
+                  <label class="choice-card radio"><input type="radio" name="ai_expected_impact" value="Not at all"><span class="control-mark"></span><span class="choice-text">Not at all</span></label>
+                  <label class="choice-card radio"><input type="radio" name="ai_expected_impact" value="Slightly"><span class="control-mark"></span><span class="choice-text">Slightly</span></label>
+                  <label class="choice-card radio"><input type="radio" name="ai_expected_impact" value="Moderately"><span class="control-mark"></span><span class="choice-text">Moderately</span></label>
+                  <label class="choice-card radio"><input type="radio" name="ai_expected_impact" value="Significantly"><span class="control-mark"></span><span class="choice-text">Significantly</span></label>
+                  <label class="choice-card radio"><input type="radio" name="ai_expected_impact" value="Not sure"><span class="control-mark"></span><span class="choice-text">Not sure</span></label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="screen" data-step="b1" data-title="Section B1">
+            <div class="screen-header">
+              <h2>Expected challenges</h2>
+              <p class="lead">Student / recent graduate branch. Please answer based on what you expect when entering the workplace. 1 = Strongly disagree; 5 = Strongly agree. Items marked "If applicable" include N/A.</p>
+            </div>
+            <div class="scale-note" aria-label="Likert scale labels"><span>1 = Strongly disagree</span><span>5 = Strongly agree</span></div>
+            <div class="likert-list" id="b1Items"></div>
+          </section>
+
+          <section class="screen" data-step="b2" data-title="Section B2">
+            <div class="screen-header">
+              <h2>Actual experience</h2>
+              <p class="lead">Early-career professional branch. Please answer based on your actual experience within 0-3 years after graduation. 1 = Strongly disagree; 5 = Strongly agree. Items marked "If applicable" include N/A.</p>
+            </div>
+            <div class="scale-note" aria-label="Likert scale labels"><span>1 = Strongly disagree</span><span>5 = Strongly agree</span></div>
+            <div class="likert-list" id="b2Items"></div>
+          </section>
+
+          <section class="screen" data-step="c" data-title="Section C">
+            <div class="screen-header">
+              <h2>Reasons behind the challenges</h2>
+              <p class="lead">Use this section to identify which challenges matter most and what may be driving them.</p>
+            </div>
+            <div class="question-stack">
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>C1. From the challenges above, please select the three that are most important to you.</h3>
+                    <p>The prototype gently limits this to three selections.</p>
+                  </div>
+                  <span class="mini-label">Up to 3</span>
+                </div>
+                <div class="choice-grid" id="topChallenges"></div>
+                <input class="inline-other" type="text" name="challenge_other" aria-label="Other important challenge" placeholder="Other challenge" hidden>
+                <p class="helper" id="challengeLimit">0 of 3 selected</p>
+              </div>
+
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>C2. Why did you select these challenges?</h3>
+                    <p>Please briefly explain why these challenges matter most to you.</p>
+                  </div>
+                </div>
+                <textarea name="challenge_explanation" placeholder="Please briefly explain why these challenges matter most to you."></textarea>
+              </div>
+
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>C3. What do you think these challenges mainly come from?</h3>
+                    <p>Select all that apply.</p>
+                  </div>
+                </div>
+                <div class="choice-grid" id="reasons"></div>
+                <input class="inline-other" type="text" name="reason_other" aria-label="Other perceived reason" placeholder="Other reason" hidden>
+              </div>
+            </div>
+          </section>
+
+          <section class="screen" data-step="d" data-title="Section D">
+            <div class="screen-header">
+              <h2>Employer support needs</h2>
+              <p class="lead">This section asks what forms of employer support would feel useful during the early-career transition.</p>
+            </div>
+            <div class="question-stack">
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>D1. Which forms of employer support do you think would be most helpful?</h3>
+                    <p>Please select up to five.</p>
+                  </div>
+                  <span class="mini-label">Up to 5</span>
+                </div>
+                <div class="choice-grid" id="supportOptions"></div>
+                <input class="inline-other" type="text" name="support_other" aria-label="Other support option" placeholder="Other support option" hidden>
+                <p class="helper" id="supportLimit">0 of 5 selected</p>
+              </div>
+
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>D2. If possible, please rank up to three of the support options you selected.</h3>
+                    <p>Please choose different options for each ranking position.</p>
+                  </div>
+                </div>
+                <div class="rank-grid">
+                  <label class="rank-row"><span>No. 1</span><select name="rank_1"><option value="">Select a support option</option></select></label>
+                  <label class="rank-row"><span>No. 2</span><select name="rank_2"><option value="">Select a support option</option></select></label>
+                  <label class="rank-row"><span>No. 3</span><select name="rank_3"><option value="">Select a support option</option></select></label>
+                </div>
+              </div>
+
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>D3. Please rate the following statements about whether employer support would feel credible and accessible.</h3>
+                    <p>1 = Strongly disagree; 5 = Strongly agree.</p>
+                  </div>
+                </div>
+                <div class="scale-note" aria-label="Likert scale labels"><span>1 = Strongly disagree</span><span>5 = Strongly agree</span></div>
+                <div class="likert-list" id="d3Items"></div>
+              </div>
+
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>D4. What would make employer support feel genuinely useful rather than surface-level, symbolic, or difficult to access?</h3>
+                  </div>
+                </div>
+                <textarea name="useful_support" placeholder="Write your response here..."></textarea>
+              </div>
+
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>D5. If mentoring, coaching, career development guidance, or transition support were offered, what specific issues would you hope it could help you with?</h3>
+                  </div>
+                </div>
+                <textarea name="mentoring_support" placeholder="Write your response here..."></textarea>
+              </div>
+            </div>
+          </section>
+
+          <section class="screen" data-step="e" data-title="Section E">
+            <div class="screen-header">
+              <h2>Additional comments</h2>
+              <p class="lead" id="openCommentLead">Before closing, you may add final comments about the education-to-employment transition, workplace wellbeing, AI-related pressure, cross-cultural adjustment, or employer support.</p>
+            </div>
+            <div class="question-stack">
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>E1. What is one thing you wish employers better understood about the transition from education to employment?</h3>
+                    <p>This open question is optional.</p>
+                  </div>
+                </div>
+                <textarea name="employer_understanding" placeholder="Write your response here..."></textarea>
+              </div>
+
+              <div class="question-block">
+                <div class="question-title">
+                  <div>
+                    <h3>E2. If you have experience of AI-related pressure, cross-cultural adjustment, or relocation during early career transition, please describe what support would have helped.</h3>
+                    <p>This question is optional and can be left blank if it is not applicable.</p>
+                  </div>
+                </div>
+                <textarea name="ai_culture_relocation_support" placeholder="Optional: describe what support would have helped, if applicable."></textarea>
+              </div>
+            </div>
+          </section>
+
+          <section class="screen" data-step="thanks" data-title="Complete">
+            <div class="thank-you">
+              <div class="thank-you-inner">
+                <div class="success-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                </div>
+                <h2 id="thanksTitle">Thank you for taking part.</h2>
+                <p class="lead" id="thanksBody">Your responses would help us understand the challenges, reasons, and support needs of early-career professionals during the transition into work, and may inform research insights for The Talent Lighthouse's employer-facing support offer.</p>
+                <p class="footer-note">Prototype only: this page does not submit, transmit, store, or save responses. Refreshing or closing the browser clears the live demo state.</p>
+              </div>
+            </div>
+          </section>
+        </form>
+      </div>
+
+      <div class="error-message" id="errorMessage" role="alert" aria-live="polite"></div>
+      <footer class="actions">
+        <button class="btn ghost" type="button" id="restartBtn">Restart prototype</button>
+        <div class="button-group">
+          <button class="btn secondary" type="button" id="backBtn">Back</button>
+          <button class="btn primary" type="button" id="nextBtn">Continue</button>
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <script>
+    const steps = {
+      intro: { next: "a" },
+      a: { next: getBranchStep },
+      b1: { next: "c" },
+      b2: { next: "c" },
+      c: { next: "d" },
+      d: { next: "e" },
+      e: { next: "thanks" },
+      thanks: { next: null }
+    };
+
+    const baseFlow = ["intro", "a", "b1", "b2", "c", "d", "e", "thanks"];
+    const historyStack = ["intro"];
+    let currentStep = "intro";
+
+    const b1Items = [
+      "Overall, I expect the transition from education to employment to be challenging for my wellbeing.",
+      "I am concerned that the job-search process itself, including repeated applications, waiting, rejection, or lack of feedback, may affect my wellbeing.",
+      "I am concerned that workload, performance expectations, or work pace may become a major source of pressure when I enter the workplace.",
+      "I am concerned that I may not clearly understand my role expectations, responsibilities, or transition into a professional identity.",
+      "I am concerned that it may be difficult to feel connected with colleagues or develop a sense of belonging in a new workplace.",
+      "I believe that feedback and support from my line manager or supervisor would significantly affect my adjustment when entering the workplace.",
+      "I am concerned that a lack of confidence, or uncertainty about my career direction, may affect me.",
+      "If a team does not feel safe for asking questions, admitting uncertainty, or raising concerns, I may be less comfortable seeking help.",
+      "Living costs, salary concerns, or relocation costs may increase pressure during my transition from education to employment.",
+      "I am concerned that rapid developments in AI may make entry-level roles more uncertain or competitive.",
+      "I feel pressure to demonstrate AI or digital skills when applying for jobs or entering the workplace.",
+      "If applicable, working in a country or cultural environment different from my own may make workplace norms and expectations difficult to understand.",
+      "If applicable, communication styles, feedback styles, or hierarchy expectations may differ across cultures.",
+      "I am concerned that I may not fully understand professional communication or workplace conduct expectations.",
+      "I may find it difficult to adapt when tasks, priorities, or expectations change quickly."
+    ];
+
+    const b2Items = [
+      "Overall, the transition from education to employment was challenging for my wellbeing.",
+      "The job-search process itself, including repeated applications, waiting, rejection, or lack of feedback, affected my wellbeing before I started work.",
+      "When I first entered the workplace, workload, performance expectations, or work pace were a major source of pressure.",
+      "I was sometimes unclear about my role expectations or responsibilities, or found it difficult to transition into a professional identity.",
+      "I found it difficult to feel connected with colleagues or develop a sense of belonging in my early workplace experience.",
+      "The quality of feedback and support from my line manager or supervisor significantly affected my early workplace adjustment.",
+      "A lack of confidence, or uncertainty about my career direction, affected my wellbeing or work motivation.",
+      "When a team did not feel safe for asking questions, admitting uncertainty, or raising concerns, I was less willing to seek help.",
+      "Living costs, salary concerns, or relocation costs increased pressure during my early workplace transition.",
+      "Rapid developments in AI changed the skills or tasks expected of me in my early-career role.",
+      "I felt pressure to keep up with AI tools or digital ways of working.",
+      "If applicable, differences in workplace norms or cultural expectations affected my early-career adjustment.",
+      "If applicable, communication styles, feedback styles, or hierarchy expectations created challenges for me.",
+      "I was unsure about professional communication or workplace conduct expectations when I first started.",
+      "I found it difficult to adapt when tasks, priorities, or expectations changed quickly."
+    ];
+
+    const d3Items = [
+      "It is clear how confidentiality would be handled if I used wellbeing, mentoring, coaching, or transition support.",
+      "Employer support would be easy to access or book when I need it.",
+      "Line managers or supervisors would have enough capability to provide helpful early-career support.",
+      "Employer support would include ongoing follow-up rather than being a one-off activity.",
+      "I would know where to go, or who to contact, if I needed wellbeing, mentoring, coaching, or transition support.",
+      "Employer support would feel more useful if it included practical examples and real workplace scenarios.",
+      "I would trust support more if managers were trained to understand early-career, cross-cultural, and wellbeing challenges.",
+      "I would trust support more if the organisation clearly explained how AI is expected to be used at work.",
+      "Support would feel more credible if it was tailored to different backgrounds and circumstances rather than one-size-fits-all."
+    ];
+
+    const challenges = [
+      "Workload and performance pressure",
+      "Role clarity and professional identity transition",
+      "Workplace connectedness and belonging",
+      "Feedback and support from my line manager or supervisor",
+      "Confidence and career uncertainty",
+      "Feeling safe to ask questions, admit uncertainty, or raise concerns",
+      "Financial pressure or living-cost pressure",
+      "AI-related skill pressure or uncertainty",
+      "Unclear expectations around appropriate AI use",
+      "Cross-cultural communication or workplace norms",
+      "Relocation, visa/right-to-work, or adapting to a new country",
+      "Professional communication and workplace conduct",
+      "Job-search pressure, recruitment competition, or lack of feedback from employers",
+      "Other"
+    ];
+
+    const reasons = [
+      "Limited personal preparation or experience",
+      "Information gap between education and the workplace",
+      "Insufficient organisational support",
+      "Unclear manager communication or feedback",
+      "Work design or workload issues",
+      "Team culture or interpersonal relationship issues",
+      "Financial pressure or changes in living arrangements",
+      "Rapid technological change or unclear AI expectations",
+      "Limited guidance on using AI appropriately",
+      "Cultural differences, language, or communication style",
+      "Relocation or international mobility pressures",
+      "Limited work experience, internships, or exposure to professional settings",
+      "Stress from the recruitment process, repeated applications, rejection, waiting, or limited employer feedback",
+      "Other"
+    ];
+
+    const support = [
+      "Clear and structured onboarding",
+      "Regular manager check-ins",
+      "Timely, specific, and actionable feedback",
+      "Mentoring or buddy system",
+      "Coaching or transition support",
+      "Career development guidance",
+      "Peer support / early-career community",
+      "Workload management or reasonable workload planning",
+      "Mental health / wellbeing resources",
+      "Flexible working",
+      "Clearer explanation of progression, performance, salary, role location, and expectations",
+      "Clear guidance and training on responsible AI use in recruitment and workplace tasks",
+      "Career readiness and recruitment-process support, including applications, interviews, assessment centres, feedback, pre-joining communication, and workplace expectations",
+      "Professional communication and workplace norms training",
+      "Cross-cultural mentoring or international transition support",
+      "Relocation, visa/right-to-work, or living-cost guidance",
+      "Manager training on supporting early-career employees across cultures and AI-changing roles",
+      "Structured face-to-face induction or community-building sessions",
+      "Other, please specify"
+    ];
+
+    function buildLikert(containerId, prefix, items) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = items.map((item, index) => {
+        const code = `${prefix}.${index + 1}`;
+        const name = `${prefix}_${index + 1}`;
+        const hasNA = item.startsWith("If applicable");
+        const values = hasNA ? [1, 2, 3, 4, 5, "N/A"] : [1, 2, 3, 4, 5];
+        const scale = values.map(value => `
+          <label>
+            <input type="radio" name="${name}" value="${value}">
+            <span>${value}</span>
+          </label>
+        `).join("");
+        return `
+          <div class="likert-row">
+            <div class="likert-statement">
+              <span class="item-code">${code}</span>
+              <p>${item}</p>
+            </div>
+            <div class="scale ${hasNA ? "has-na" : ""}" aria-label="${code} rating">${scale}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function buildCheckboxGrid(containerId, name, items) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = items.map(item => `
+        <label class="choice-card checkbox">
+          <input type="checkbox" name="${name}" value="${escapeAttribute(item)}">
+          <span class="control-mark"></span>
+          <span class="choice-text">${item}</span>
+        </label>
+      `).join("");
+    }
+
+    function escapeAttribute(value) {
+      return value.replace(/"/g, "&quot;");
+    }
+
+    function getCheckedValue(name) {
+      const checked = document.querySelector(`input[name="${name}"]:checked`);
+      return checked ? checked.value : "";
+    }
+
+    function getBranchStep() {
+      const consent = getCheckedValue("consent");
+      const situation = getCheckedValue("situation");
+      if (consent === "exit") return "thanks";
+      if (situation === "student" || situation === "recent") return "b1";
+      if (situation === "professional") return "b2";
+      if (situation === "none") return "e";
+      return "a";
+    }
+
+    function getActiveFlow() {
+      const consent = getCheckedValue("consent");
+      const situation = getCheckedValue("situation");
+      if (consent === "exit") return ["intro", "a", "thanks"];
+      if (situation === "student" || situation === "recent") return ["intro", "a", "b1", "c", "d", "e", "thanks"];
+      if (situation === "professional") return ["intro", "a", "b2", "c", "d", "e", "thanks"];
+      if (situation === "none") return ["intro", "a", "e", "thanks"];
+      return ["intro", "a", "b1", "c", "d", "e", "thanks"];
+    }
+
+    function validateStep(step) {
+      if (step === "d") {
+        const ranked = [...document.querySelectorAll('select[name^="rank_"]')]
+          .map(select => select.value)
+          .filter(Boolean);
+        if (new Set(ranked).size !== ranked.length) {
+          setError("Please choose different options for each ranking position.");
+          return false;
+        }
+        return true;
+      }
+
+      if (step !== "a") return true;
+      const consent = getCheckedValue("consent");
+      const situation = getCheckedValue("situation");
+      if (!consent) {
+        setError("Please choose a consent option before continuing.");
+        return false;
+      }
+      if (consent === "exit") {
+        prepareExitThanks();
+        return true;
+      }
+      if (!situation) {
+        setError("Please select your current situation so the prototype can route the next section.");
+        return false;
+      }
+      return true;
+    }
+
+    function prepareExitThanks() {
+      document.getElementById("thanksTitle").textContent = "Thank you.";
+      document.getElementById("thanksBody").textContent = "You selected that you do not wish to take part. In a live questionnaire, this would end the survey without collecting further responses.";
+    }
+
+    function prepareCompletionThanks() {
+      document.getElementById("thanksTitle").textContent = "Thank you for taking part.";
+      document.getElementById("thanksBody").textContent = "Your responses would help us understand early-career transition challenges, AI-related pressure, cross-cultural adjustment, and employer support needs, and may inform research insights for The Talent Lighthouse's employer-facing support offer.";
+    }
+
+    function showStep(step, pushHistory = true) {
+      if (step === "thanks" && getCheckedValue("consent") !== "exit") {
+        prepareCompletionThanks();
+      }
+
+      currentStep = step;
+      document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.toggle("active", screen.dataset.step === step);
+      });
+
+      if (pushHistory && historyStack[historyStack.length - 1] !== step) {
+        historyStack.push(step);
+      }
+
+      setError("");
+      updateProgress();
+      updateActionButtons();
+      document.querySelector(".questionnaire").scrollIntoView({ block: "nearest" });
+    }
+
+    function updateProgress() {
+      const activeFlow = getActiveFlow();
+      const index = Math.max(activeFlow.indexOf(currentStep), 0);
+      const total = activeFlow.length;
+      const progress = total <= 1 ? 100 : (index / (total - 1)) * 100;
+      const screen = document.querySelector(`.screen[data-step="${currentStep}"]`);
+      document.getElementById("sectionLabel").textContent = screen ? screen.dataset.title : "Questionnaire";
+      document.getElementById("stepCount").textContent = `Step ${index + 1} of ${total}`;
+      document.getElementById("progressBar").style.width = `${progress}%`;
+    }
+
+    function updateActionButtons() {
+      document.getElementById("backBtn").disabled = historyStack.length <= 1;
+      document.getElementById("backBtn").style.visibility = historyStack.length <= 1 ? "hidden" : "visible";
+      document.getElementById("nextBtn").textContent = currentStep === "e" ? "Finish" : "Continue";
+      document.getElementById("nextBtn").style.display = currentStep === "thanks" ? "none" : "inline-flex";
+    }
+
+    function setError(message) {
+      document.getElementById("errorMessage").textContent = message;
+    }
+
+    function goNext() {
+      if (!validateStep(currentStep)) return;
+      const rule = steps[currentStep];
+      const next = typeof rule.next === "function" ? rule.next() : rule.next;
+      if (next) showStep(next);
+    }
+
+    function goBack() {
+      if (historyStack.length <= 1) return;
+      historyStack.pop();
+      const previous = historyStack[historyStack.length - 1];
+      showStep(previous, false);
+    }
+
+    function updateBranchHint() {
+      const situation = getCheckedValue("situation");
+      const hint = document.getElementById("branchHint");
+      const openCommentLead = document.getElementById("openCommentLead");
+      if (situation === "student" || situation === "recent") {
+        hint.textContent = "Next: Section B1, focused on expected challenges.";
+        openCommentLead.textContent = "Before closing, you may add final comments about the education-to-employment transition, workplace wellbeing, AI-related pressure, cross-cultural adjustment, or employer support.";
+      } else if (situation === "professional") {
+        hint.textContent = "Next: Section B2, focused on actual early-career experience.";
+        openCommentLead.textContent = "Before closing, you may add final comments about your early-career transition, workplace wellbeing, AI-related pressure, cross-cultural adjustment, or employer support.";
+      } else if (situation === "none") {
+        hint.textContent = "Next: optional open comment section, then the prototype closes.";
+        openCommentLead.textContent = "Because you selected None of the above, the prototype skips the main questionnaire and offers only this optional comment section.";
+      } else {
+        hint.textContent = "Choose a situation to see the next section.";
+      }
+      updateProgress();
+    }
+
+    function enforceLimit(name, limit, helperId) {
+      const checked = [...document.querySelectorAll(`input[name="${name}"]:checked`)];
+      const boxes = [...document.querySelectorAll(`input[name="${name}"]`)];
+      const helper = document.getElementById(helperId);
+      helper.textContent = `${checked.length} of ${limit} selected`;
+      helper.classList.toggle("warn", checked.length >= limit);
+      boxes.forEach(box => {
+        box.disabled = !box.checked && checked.length >= limit;
+        box.closest(".choice-card").style.opacity = box.disabled ? "0.58" : "1";
+      });
+    }
+
+    function updateRankOptions() {
+      const selected = [...document.querySelectorAll('input[name="support"]:checked')].map(input => input.value);
+      const otherText = document.querySelector('input[name="support_other"]').value.trim();
+      const options = selected.map(value => value === "Other, please specify" && otherText ? otherText : value);
+      document.querySelectorAll('select[name^="rank_"]').forEach(select => {
+        const previous = select.value;
+        const alreadyRanked = [...document.querySelectorAll('select[name^="rank_"]')]
+          .filter(otherSelect => otherSelect !== select)
+          .map(otherSelect => otherSelect.value)
+          .filter(Boolean);
+        const availableOptions = options.filter(option => option === previous || !alreadyRanked.includes(option));
+        select.innerHTML = '<option value="">Select a support option</option>' + availableOptions.map(option => `<option value="${escapeAttribute(option)}">${option}</option>`).join("");
+        if (options.includes(previous)) select.value = previous;
+      });
+    }
+
+    function updateIndustryExclusivity(event) {
+      const preferNot = document.querySelector('input[name="industry"][value="Prefer not to say"]');
+      const industryBoxes = [...document.querySelectorAll('input[name="industry"]')];
+      if (!preferNot) return;
+
+      if (event && event.target === preferNot && preferNot.checked) {
+        industryBoxes.forEach(box => {
+          if (box !== preferNot) box.checked = false;
+        });
+        return;
+      }
+
+      if (industryBoxes.some(box => box !== preferNot && box.checked)) {
+        preferNot.checked = false;
+      }
+    }
+
+    function updateOtherTextbox(checkboxName, otherValue, inputName) {
+      const otherBox = document.querySelector(`input[name="${checkboxName}"][value="${otherValue}"]`);
+      const textInput = document.querySelector(`input[name="${inputName}"]`);
+      if (!otherBox || !textInput) return;
+
+      textInput.hidden = !otherBox.checked;
+      if (!otherBox.checked) textInput.value = "";
+    }
+
+    function updateOtherTextboxes() {
+      updateOtherTextbox("challenge", "Other", "challenge_other");
+      updateOtherTextbox("reason", "Other", "reason_other");
+      updateOtherTextbox("support", "Other, please specify", "support_other");
+    }
+
+    function restartPrototype() {
+      document.getElementById("questionnaireForm").reset();
+      historyStack.splice(0, historyStack.length, "intro");
+      document.querySelectorAll(".choice-card").forEach(card => {
+        card.style.opacity = "1";
+      });
+      document.querySelectorAll("input[type='checkbox']").forEach(input => {
+        input.disabled = false;
+      });
+      updateBranchHint();
+      updateIndustryExclusivity();
+      updateOtherTextboxes();
+      enforceLimit("challenge", 3, "challengeLimit");
+      enforceLimit("support", 5, "supportLimit");
+      updateRankOptions();
+      prepareCompletionThanks();
+      showStep("intro", false);
+    }
+
+    buildLikert("b1Items", "B1", b1Items);
+    buildLikert("b2Items", "B2", b2Items);
+    buildLikert("d3Items", "D3", d3Items);
+    buildCheckboxGrid("topChallenges", "challenge", challenges);
+    buildCheckboxGrid("reasons", "reason", reasons);
+    buildCheckboxGrid("supportOptions", "support", support);
+
+    document.getElementById("nextBtn").addEventListener("click", goNext);
+    document.getElementById("backBtn").addEventListener("click", goBack);
+    document.getElementById("restartBtn").addEventListener("click", restartPrototype);
+
+    document.querySelectorAll('input[name="situation"], input[name="consent"]').forEach(input => {
+      input.addEventListener("change", updateBranchHint);
+    });
+
+    document.getElementById("topChallenges").addEventListener("change", () => {
+      enforceLimit("challenge", 3, "challengeLimit");
+      updateOtherTextboxes();
+    });
+
+    document.getElementById("reasons").addEventListener("change", updateOtherTextboxes);
+
+    document.getElementById("supportOptions").addEventListener("change", () => {
+      enforceLimit("support", 5, "supportLimit");
+      updateOtherTextboxes();
+      updateRankOptions();
+    });
+
+    document.querySelectorAll('input[name="industry"]').forEach(input => {
+      input.addEventListener("change", updateIndustryExclusivity);
+    });
+
+    document.querySelector('input[name="support_other"]').addEventListener("input", updateRankOptions);
+
+    document.querySelectorAll('select[name^="rank_"]').forEach(select => {
+      select.addEventListener("change", updateRankOptions);
+    });
+
+    enforceLimit("challenge", 3, "challengeLimit");
+    enforceLimit("support", 5, "supportLimit");
+    updateOtherTextboxes();
+    updateRankOptions();
+    updateProgress();
+    updateActionButtons();
+  </script>
+</body>
+</html>
