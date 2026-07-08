@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,">
-  <title>AEP Questionnaire Draft v6</title>
+  <title>Early-Career Transition &amp; Workplace Wellbeing Questionnaire</title>
   <style>
     :root {
       --ink: #17202a;
@@ -283,6 +283,14 @@
       background: rgba(255, 249, 238, 0.72);
       color: #64513a;
       line-height: 1.55;
+    }
+
+    .note-card p {
+      margin: 0;
+    }
+
+    .note-card p + p {
+      margin-top: 14px;
     }
 
     .question-stack {
@@ -818,8 +826,8 @@
     <aside class="side-panel" aria-label="Prototype overview">
       <div>
         <div class="brand-mark">AEP</div>
-        <h1>Early-Career Transition Questionnaire</h1>
-        <p>A polished interactive prototype for exploring job-search pressure, workplace connectedness, AI-related pressure, cross-cultural adjustment, and employer support needs.</p>
+        <h1>Early-Career Transition &amp; Workplace Wellbeing Questionnaire</h1>
+        <p>An interactive questionnaire exploring job-search pressure, workplace connectedness, AI-related pressure, cross-cultural adjustment, and employer support needs.</p>
       </div>
       <div class="side-metrics" aria-label="Prototype facts">
         <div class="metric"><span>Mode</span><span>Wizard demo</span></div>
@@ -843,29 +851,30 @@
         <form id="questionnaireForm" novalidate>
           <section class="screen active" data-step="intro" data-title="Introduction">
             <div class="screen-header">
-              <h2>Questionnaire Draft v6</h2>
-              <p class="lead">This prototype presents a small enhancement of V5 for group discussion, with clearer attention to job-search pressure, workplace connectedness, and accessible employer support. It is not the final published version and has not yet been approved through the ethics process.</p>
+              <h2>Early-Career Transition &amp; Workplace Wellbeing Questionnaire</h2>
+              <p class="lead">This questionnaire explores the challenges, experiences, and support needs of students, recent graduates, and early-career professionals during the transition from education to employment. It focuses on areas including job-search pressure, workplace connectedness, AI-related pressure, cross-cultural adjustment, and employer support.</p>
             </div>
             <div class="info-grid">
               <div class="info-tile">
                 <strong>Purpose</strong>
-                <span>Explore early-career transition challenges, job-search pressure, workplace connectedness, AI-related pressure, cross-cultural adjustment, and employer support needs.</span>
+                <span>Explore the challenges, experiences, and support needs of students, recent graduates, and early-career professionals during the transition from education to employment.</span>
               </div>
               <div class="info-tile">
                 <strong>Methods note</strong>
-                <span>Captures participant perceptions and does not replace employer-practice mapping, which remains a separate desk-based research activity.</span>
+                <span>Captures participant perceptions and should be read separately from employer-practice mapping, which remains a desk-based research activity.</span>
               </div>
               <div class="info-tile">
                 <strong>Participation</strong>
-                <span>Participation is voluntary and anonymous. Questions can be skipped except where needed for routing.</span>
+                <span>Participation is voluntary, and responses will be treated anonymously. Questions can be skipped except where needed for consent or routing.</span>
               </div>
               <div class="info-tile">
                 <strong>Ethics note</strong>
-                <span>Literature-informed exploratory mixed-methods questionnaire, not a validated psychological scale.</span>
+                <span>The questionnaire does not collect clinical or diagnostic information and should not be understood as a psychological assessment.</span>
               </div>
             </div>
             <div class="note-card">
-              Literature-informed exploratory mixed-methods questionnaire, not a validated psychological scale. V6 lightly strengthens the V5 direction by adding clearer coverage of job-search pressure, belonging and connectedness, and knowing how to access support. The data would be used only for an AEP research draft, subject to supervisor and ethics approval before any formal release. Before any formal release, this questionnaire would need to be aligned with the approved participant information sheet and consent process, including information about the research team, data handling, anonymous quote use, withdrawal rights, support contacts, and wellbeing-related sensitivity. Prototype only: no submit, no storage.
+              <p>This questionnaire is part of an Applied Extended Project at the University of Bristol. It explores the experiences, challenges, and support needs of students, recent graduates, and early-career professionals during the transition from education to employment. The questionnaire focuses on job-search pressure, workplace connectedness, AI-related pressure, cross-cultural adjustment, and employer support.</p>
+              <p>Responses will be used for academic research purposes only. Participation is voluntary, and responses will be treated anonymously. Participants may skip any question they do not wish to answer, except where a response is needed for consent or routing. The questionnaire does not collect clinical or diagnostic information and should not be understood as a psychological assessment.</p>
             </div>
           </section>
 
@@ -881,7 +890,6 @@
                     <h3>A1. I have read the information above and agree to take part in this questionnaire.</h3>
                     <p>Consent is required to continue into the questionnaire path.</p>
                   </div>
-                  <span class="mini-label">Required</span>
                 </div>
                 <div class="choice-grid">
                   <label class="choice-card radio">
@@ -903,7 +911,6 @@
                     <h3>A2. Which of the following best describes your current situation?</h3>
                     <p>Your answer determines whether Section B1 or Section B2 appears next.</p>
                   </div>
-                  <span class="mini-label">Required</span>
                 </div>
                 <div class="choice-grid">
                   <label class="choice-card radio">
@@ -933,8 +940,8 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>A3. What is your graduation year, or expected graduation year?</h3>
-                    <p>Select one option. This field is optional in the prototype.</p>
+                    <h3>A3. What is your graduation year, or expected graduation year? (optional)</h3>
+                    <p>Select one option.</p>
                   </div>
                 </div>
                 <div class="choice-grid">
@@ -949,8 +956,8 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>A4. What is your current employment status?</h3>
-                    <p>Select one option. This field is optional in the prototype.</p>
+                    <h3>A4. What is your current employment status? (optional)</h3>
+                    <p>Select one option.</p>
                   </div>
                 </div>
                 <div class="choice-grid">
@@ -969,8 +976,8 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>A5. Which industry or field are you currently in, or expecting to enter?</h3>
-                    <p>Select any that apply. This field is optional in the prototype.</p>
+                    <h3>A5. Which industry or field are you currently in, or expecting to enter? (optional)</h3>
+                    <p>Select any that apply.</p>
                   </div>
                 </div>
                 <div class="choice-grid three">
@@ -988,7 +995,7 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>A6. Are you currently working, applying, or expecting to work in a country/region different from where you mainly studied or grew up?</h3>
+                    <h3>A6. Are you currently working, applying, or expecting to work in a country/region different from where you mainly studied or grew up? (optional)</h3>
                     <p>Select one option. This field helps interpret cross-cultural transition items.</p>
                   </div>
                 </div>
@@ -1003,7 +1010,7 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>A7. To what extent have AI or digital tools affected, or do you expect them to affect, your job search or early-career role?</h3>
+                    <h3>A7. To what extent have AI or digital tools affected, or do you expect them to affect, your job search or early-career role? (optional)</h3>
                     <p>Select one option. AI is treated as a broad workplace and recruitment issue, not only a technology-sector issue.</p>
                   </div>
                 </div>
@@ -1021,7 +1028,7 @@
           <section class="screen" data-step="b1" data-title="Section B1">
             <div class="screen-header">
               <h2>Expected challenges</h2>
-              <p class="lead">Student / recent graduate branch. Please answer based on what you expect when entering the workplace. 1 = Strongly disagree; 5 = Strongly agree. Items marked "If applicable" include N/A.</p>
+              <p class="lead">Student / recent graduate branch. Please answer based on what you expect when entering the workplace. Responses are optional. 1 = Strongly disagree; 5 = Strongly agree. Items marked "If applicable" include N/A.</p>
             </div>
             <div class="scale-note" aria-label="Likert scale labels"><span>1 = Strongly disagree</span><span>5 = Strongly agree</span></div>
             <div class="likert-list" id="b1Items"></div>
@@ -1030,7 +1037,7 @@
           <section class="screen" data-step="b2" data-title="Section B2">
             <div class="screen-header">
               <h2>Actual experience</h2>
-              <p class="lead">Early-career professional branch. Please answer based on your actual experience within 0-3 years after graduation. 1 = Strongly disagree; 5 = Strongly agree. Items marked "If applicable" include N/A.</p>
+              <p class="lead">Early-career professional branch. Please answer based on your actual experience within 0-3 years after graduation. Responses are optional. 1 = Strongly disagree; 5 = Strongly agree. Items marked "If applicable" include N/A.</p>
             </div>
             <div class="scale-note" aria-label="Likert scale labels"><span>1 = Strongly disagree</span><span>5 = Strongly agree</span></div>
             <div class="likert-list" id="b2Items"></div>
@@ -1045,8 +1052,8 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>C1. From the challenges above, please select the three that are most important to you.</h3>
-                    <p>The prototype gently limits this to three selections.</p>
+                    <h3>C1. From the challenges above, please select the three that are most important to you. (optional)</h3>
+                    <p>Select up to three.</p>
                   </div>
                   <span class="mini-label">Up to 3</span>
                 </div>
@@ -1058,7 +1065,7 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>C2. Why did you select these challenges?</h3>
+                    <h3>C2. Why did you select these challenges? (optional)</h3>
                     <p>Please briefly explain why these challenges matter most to you.</p>
                   </div>
                 </div>
@@ -1068,7 +1075,7 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>C3. What do you think these challenges mainly come from?</h3>
+                    <h3>C3. What do you think these challenges mainly come from? (optional)</h3>
                     <p>Select all that apply.</p>
                   </div>
                 </div>
@@ -1087,7 +1094,7 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>D1. Which forms of employer support do you think would be most helpful?</h3>
+                    <h3>D1. Which forms of employer support do you think would be most helpful? (optional)</h3>
                     <p>Please select up to five.</p>
                   </div>
                   <span class="mini-label">Up to 5</span>
@@ -1100,8 +1107,8 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>D2. If possible, please rank up to three of the support options you selected.</h3>
-                    <p>Please choose different options for each ranking position.</p>
+                    <h3>D2. If possible, please rank up to three support priorities that would matter most to you. (optional)</h3>
+                    <p>These options are preset from the AEP themes. Please choose different options for each ranking position.</p>
                   </div>
                 </div>
                 <div class="rank-grid">
@@ -1114,8 +1121,8 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>D3. Please rate the following statements about whether employer support would feel credible and accessible.</h3>
-                    <p>1 = Strongly disagree; 5 = Strongly agree.</p>
+                    <h3>D3. Please rate the following statements about whether employer support would feel credible and accessible. (optional)</h3>
+                    <p>Responses are optional. 1 = Strongly disagree; 5 = Strongly agree.</p>
                   </div>
                 </div>
                 <div class="scale-note" aria-label="Likert scale labels"><span>1 = Strongly disagree</span><span>5 = Strongly agree</span></div>
@@ -1125,7 +1132,7 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>D4. What would make employer support feel genuinely useful rather than surface-level, symbolic, or difficult to access?</h3>
+                    <h3>D4. What would make employer support feel genuinely useful rather than surface-level, symbolic, or difficult to access? (optional)</h3>
                   </div>
                 </div>
                 <textarea name="useful_support" placeholder="Write your response here..."></textarea>
@@ -1134,7 +1141,7 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>D5. If mentoring, coaching, career development guidance, or transition support were offered, what specific issues would you hope it could help you with?</h3>
+                    <h3>D5. If mentoring, coaching, career development guidance, or transition support were offered, what specific issues would you hope it could help you with? (optional)</h3>
                   </div>
                 </div>
                 <textarea name="mentoring_support" placeholder="Write your response here..."></textarea>
@@ -1151,8 +1158,8 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>E1. What is one thing you wish employers better understood about the transition from education to employment?</h3>
-                    <p>This open question is optional.</p>
+                    <h3>E1. What is one thing you wish employers better understood about the transition from education to employment? (optional)</h3>
+                    <p>You may leave this blank if you prefer.</p>
                   </div>
                 </div>
                 <textarea name="employer_understanding" placeholder="Write your response here..."></textarea>
@@ -1161,8 +1168,8 @@
               <div class="question-block">
                 <div class="question-title">
                   <div>
-                    <h3>E2. If you have experience of AI-related pressure, cross-cultural adjustment, or relocation during early career transition, please describe what support would have helped.</h3>
-                    <p>This question is optional and can be left blank if it is not applicable.</p>
+                    <h3>E2. If you have experience of AI-related pressure, cross-cultural adjustment, or relocation during early career transition, please describe what support would have helped. (optional)</h3>
+                    <p>You may leave this blank if it is not applicable.</p>
                   </div>
                 </div>
                 <textarea name="ai_culture_relocation_support" placeholder="Optional: describe what support would have helped, if applicable."></textarea>
@@ -1316,6 +1323,17 @@
       "Manager training on supporting early-career employees across cultures and AI-changing roles",
       "Structured face-to-face induction or community-building sessions",
       "Other, please specify"
+    ];
+
+    const supportPriorities = [
+      "Clear onboarding, role expectations, and workplace norms",
+      "Regular manager check-ins and actionable feedback",
+      "Mentoring, buddy system, coaching, or transition support",
+      "Career readiness and job-search support",
+      "Responsible AI guidance and digital skills support",
+      "Cross-cultural adjustment and relocation support",
+      "Accessible wellbeing support with clear confidentiality",
+      "Peer community and workplace connectedness"
     ];
 
     function buildLikert(containerId, prefix, items) {
@@ -1511,18 +1529,15 @@
     }
 
     function updateRankOptions() {
-      const selected = [...document.querySelectorAll('input[name="support"]:checked')].map(input => input.value);
-      const otherText = document.querySelector('input[name="support_other"]').value.trim();
-      const options = selected.map(value => value === "Other, please specify" && otherText ? otherText : value);
       document.querySelectorAll('select[name^="rank_"]').forEach(select => {
         const previous = select.value;
         const alreadyRanked = [...document.querySelectorAll('select[name^="rank_"]')]
           .filter(otherSelect => otherSelect !== select)
           .map(otherSelect => otherSelect.value)
           .filter(Boolean);
-        const availableOptions = options.filter(option => option === previous || !alreadyRanked.includes(option));
+        const availableOptions = supportPriorities.filter(option => option === previous || !alreadyRanked.includes(option));
         select.innerHTML = '<option value="">Select a support option</option>' + availableOptions.map(option => `<option value="${escapeAttribute(option)}">${option}</option>`).join("");
-        if (options.includes(previous)) select.value = previous;
+        if (supportPriorities.includes(previous)) select.value = previous;
       });
     }
 
@@ -1602,14 +1617,11 @@
     document.getElementById("supportOptions").addEventListener("change", () => {
       enforceLimit("support", 5, "supportLimit");
       updateOtherTextboxes();
-      updateRankOptions();
     });
 
     document.querySelectorAll('input[name="industry"]').forEach(input => {
       input.addEventListener("change", updateIndustryExclusivity);
     });
-
-    document.querySelector('input[name="support_other"]').addEventListener("input", updateRankOptions);
 
     document.querySelectorAll('select[name^="rank_"]').forEach(select => {
       select.addEventListener("change", updateRankOptions);
