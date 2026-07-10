@@ -293,6 +293,45 @@
       margin-top: 14px;
     }
 
+    .sensitive-note,
+    .support-note {
+      border: 1px solid rgba(47, 130, 122, 0.28);
+      border-radius: var(--radius);
+      background: rgba(239, 248, 247, 0.88);
+      color: #2c5554;
+    }
+
+    .sensitive-note {
+      max-width: 760px;
+      margin: 0 0 18px;
+      padding: 16px 18px;
+      line-height: 1.55;
+    }
+
+    .sensitive-note h3,
+    .support-note h3 {
+      margin-bottom: 8px;
+      font-size: 0.98rem;
+    }
+
+    .sensitive-note p,
+    .support-note p {
+      margin: 0;
+    }
+
+    .sensitive-note p + p,
+    .support-note p + p {
+      margin-top: 10px;
+    }
+
+    .support-note {
+      margin: 24px auto 18px;
+      padding: 18px;
+      text-align: left;
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
     .question-stack {
       display: grid;
       gap: 18px;
@@ -872,6 +911,11 @@
                 <span>The questionnaire does not collect clinical or diagnostic information and should not be understood as a psychological assessment.</span>
               </div>
             </div>
+            <aside class="sensitive-note" aria-labelledby="sensitiveTopicsTitle">
+              <h3 id="sensitiveTopicsTitle">Sensitive topics and support</h3>
+              <p>Some questions in this questionnaire relate to workplace wellbeing, job-search pressure, confidence, career uncertainty, cross-cultural adjustment, and AI-related pressure. These topics may prompt reflection on stressful or uncomfortable experiences.</p>
+              <p>You may skip any non-required question or stop completing the questionnaire at any time before submission. If any topic causes concern or discomfort, further information about appropriate wellbeing and support services is provided in the Participant Information and Consent Form.</p>
+            </aside>
             <div class="note-card">
               <p>This questionnaire is part of an Applied Extended Project at the University of Bristol. It explores the experiences, challenges, and support needs of students, recent graduates, and early-career professionals during the transition from education to employment. The questionnaire focuses on job-search pressure, workplace connectedness, AI-related pressure, cross-cultural adjustment, and employer support.</p>
               <p>Responses will be used for academic research purposes only. Participation is voluntary, and responses will be treated anonymously. Participants may skip any question they do not wish to answer, except where a response is needed for consent or routing. The questionnaire does not collect clinical or diagnostic information and should not be understood as a psychological assessment.</p>
@@ -1187,6 +1231,14 @@
                 </div>
                 <h2 id="thanksTitle">Thank you for taking part.</h2>
                 <p class="lead" id="thanksBody">Your responses would help us understand the challenges, reasons, and support needs of early-career professionals during the transition into work, and may inform research insights for The Talent Lighthouse's employer-facing support offer.</p>
+                <aside class="support-note" aria-labelledby="supportInformationTitle">
+                  <h3 id="supportInformationTitle">Support information</h3>
+                  <p>If any of the topics raised in this questionnaire have caused concern or discomfort, the following UK services may be helpful:</p>
+                  <p><strong>Samaritans:</strong> Call 116 123 free of charge, 24 hours a day, for confidential emotional support and someone to listen.</p>
+                  <p><strong>Mind Support Line:</strong> Call 0300 102 1234, Monday to Friday, 9am–6pm (except bank holidays), for emotional support and help finding appropriate services. This is not an emergency or crisis service.</p>
+                  <p>For urgent mental health support in England, call NHS 111 and select the mental health option. If you or someone else is in immediate danger, call 999 or go to A&amp;E.</p>
+                  <p>Participants outside the UK should contact an appropriate local healthcare, wellbeing, crisis, or emergency service.</p>
+                </aside>
                 <p class="footer-note">Prototype only: this page does not submit, transmit, store, or save responses. Refreshing or closing the browser clears the live demo state.</p>
               </div>
             </div>
