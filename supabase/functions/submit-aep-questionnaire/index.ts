@@ -1,7 +1,7 @@
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const QUESTIONNAIRE_VERSION = "formal-2026-07-10-v1";
-const COLLECTION_MODE = "test";
+const COLLECTION_MODE = "live";
 const MAX_BODY_BYTES = 50_000;
 
 const allowedSituations = new Set(["student", "recent", "professional", "none"]);
@@ -100,15 +100,7 @@ const allowedSupportRanks = new Set([
 type UnknownRecord = Record<string, unknown>;
 
 function isAllowedOrigin(origin: string | null) {
-  if (!origin) return false;
-  if (origin === "https://stevenjobs530-afk.github.io") return true;
-
-  try {
-    const url = new URL(origin);
-    return url.protocol === "http:" && (url.hostname === "localhost" || url.hostname === "127.0.0.1");
-  } catch {
-    return false;
-  }
+  return origin === "https://stevenjobs530-afk.github.io";
 }
 
 function corsHeaders(origin: string | null) {

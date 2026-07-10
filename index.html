@@ -644,17 +644,6 @@
       font-weight: 650;
     }
 
-    .test-banner {
-      margin: 0 0 18px;
-      padding: 14px 16px;
-      border: 1px solid #e1b86f;
-      border-radius: var(--radius);
-      color: #6b4b13;
-      background: #fff8e8;
-      font-size: 0.92rem;
-      line-height: 1.55;
-    }
-
     .honeypot {
       display: none;
     }
@@ -883,16 +872,16 @@
 </head>
 <body>
   <main class="app-shell">
-    <aside class="side-panel" aria-label="Prototype overview">
+    <aside class="side-panel" aria-label="Questionnaire overview">
       <div>
         <div class="brand-mark">AEP</div>
         <h1>Early-Career Transition &amp; Workplace Wellbeing Questionnaire</h1>
         <p>An interactive questionnaire exploring job-search pressure, workplace connectedness, AI-related pressure, cross-cultural adjustment, and employer support needs.</p>
       </div>
-      <div class="side-metrics" aria-label="Prototype facts">
-        <div class="metric"><span>Mode</span><span>Backend test</span></div>
+      <div class="side-metrics" aria-label="Questionnaire facts">
+        <div class="metric"><span>Mode</span><span>Live questionnaire</span></div>
         <div class="metric"><span>Time</span><span>8-10 min</span></div>
-        <div class="metric"><span>Storage</span><span>Supabase test</span></div>
+        <div class="metric"><span>Storage</span><span>Secure submission</span></div>
       </div>
     </aside>
 
@@ -916,9 +905,6 @@
             <div class="screen-header">
               <h2>Early-Career Transition &amp; Workplace Wellbeing Questionnaire</h2>
               <p class="lead">This questionnaire explores the challenges, experiences, and support needs of students, recent graduates, and early-career professionals during the transition from education to employment. It focuses on areas including job-search pressure, workplace connectedness, AI-related pressure, cross-cultural adjustment, and employer support.</p>
-            </div>
-            <div class="test-banner" role="note">
-              <strong>Backend integration test:</strong> submissions from this version are stored as test records only and must not be used as research data. Live collection remains disabled.
             </div>
             <div class="info-grid">
               <div class="info-tile">
@@ -1266,7 +1252,7 @@
                   <p>For urgent mental health support in England, call NHS 111 and select the mental health option. If you or someone else is in immediate danger, call 999 or go to A&amp;E.</p>
                   <p>Participants outside the UK should contact an appropriate local healthcare, wellbeing, crisis, or emergency service.</p>
                 </aside>
-                <p class="footer-note" id="submissionReceipt">Backend test only: this submission is stored with <code>collection_mode = test</code> and is excluded from the live-data export.</p>
+                <p class="footer-note" id="submissionReceipt">Your response has not been submitted yet.</p>
               </div>
             </div>
           </section>
@@ -1275,7 +1261,7 @@
 
       <div class="error-message" id="errorMessage" role="alert" aria-live="polite"></div>
       <footer class="actions">
-        <button class="btn ghost" type="button" id="restartBtn">Restart test</button>
+        <button class="btn ghost" type="button" id="restartBtn">Restart questionnaire</button>
         <div class="button-group">
           <button class="btn secondary" type="button" id="backBtn">Back</button>
           <button class="btn primary" type="button" id="nextBtn">Continue</button>
@@ -1287,7 +1273,7 @@
   <script>
     const SUBMISSION_ENDPOINT = "https://yxhsrqfyxgcaikqnovrr.supabase.co/functions/v1/submit-aep-questionnaire";
     const QUESTIONNAIRE_VERSION = "formal-2026-07-10-v1";
-    const COLLECTION_MODE = "test";
+    const COLLECTION_MODE = "live";
 
     const steps = {
       intro: { next: "a" },
@@ -1530,7 +1516,7 @@
       if (submissionInFlight) return false;
       submissionInFlight = true;
       updateActionButtons();
-      setError("Submitting this test response securely...");
+      setError("Submitting your response securely...");
 
       const controller = new AbortController();
       const timeout = window.setTimeout(() => controller.abort(), 15000);
@@ -1543,12 +1529,12 @@
         });
         const result = await response.json().catch(() => ({}));
         if (!response.ok || result.ok !== true) throw new Error(result.error || "SUBMISSION_FAILED");
-        document.getElementById("submissionReceipt").textContent = `Backend test saved successfully. Test reference: ${result.reference}. This record is excluded from the live-data export.`;
+        document.getElementById("submissionReceipt").textContent = `Your response was submitted successfully. Reference: ${result.reference}.`;
         return true;
       } catch (error) {
         const message = error && error.name === "AbortError"
           ? "The submission timed out. Please check your connection and try again."
-          : "The test response could not be saved. No completion has been recorded; please try again.";
+          : "Your response could not be saved. No completion has been recorded; please try again.";
         setError(message);
         return false;
       } finally {
@@ -1602,7 +1588,7 @@
         return true;
       }
       if (!situation) {
-        setError("Please select your current situation so the prototype can route the next section.");
+        setError("Please select your current situation so the questionnaire can route the next section.");
         return false;
       }
       return true;
@@ -1610,7 +1596,7 @@
 
     function prepareExitThanks() {
       document.getElementById("thanksTitle").textContent = "Thank you.";
-      document.getElementById("thanksBody").textContent = "You selected that you do not wish to take part. In a live questionnaire, this would end the survey without collecting further responses.";
+      document.getElementById("thanksBody").textContent = "You selected that you do not wish to take part. The questionnaire has ended without collecting a response.";
       document.getElementById("submissionReceipt").textContent = "No response was submitted or stored.";
     }
 
@@ -1656,7 +1642,7 @@
       document.getElementById("nextBtn").disabled = submissionInFlight;
       document.getElementById("nextBtn").textContent = submissionInFlight
         ? "Submitting..."
-        : currentStep === "e" ? "Submit test response" : "Continue";
+        : currentStep === "e" ? "Submit response" : "Continue";
       document.getElementById("nextBtn").style.display = currentStep === "thanks" ? "none" : "inline-flex";
     }
 
@@ -1693,8 +1679,8 @@
         hint.textContent = "Next: Section B2, focused on actual early-career experience.";
         openCommentLead.textContent = "Before closing, you may add final comments about your early-career transition, workplace wellbeing, AI-related pressure, cross-cultural adjustment, or employer support.";
       } else if (situation === "none") {
-        hint.textContent = "Next: optional open comment section, then the prototype closes.";
-        openCommentLead.textContent = "Because you selected None of the above, the prototype skips the main questionnaire and offers only this optional comment section.";
+        hint.textContent = "Next: optional open comment section, then the questionnaire closes.";
+        openCommentLead.textContent = "Because you selected None of the above, the questionnaire skips the main sections and offers only this optional comment section.";
       } else {
         hint.textContent = "Choose a situation to see the next section.";
       }
@@ -1758,10 +1744,10 @@
       updateOtherTextbox("support", "Other, please specify", "support_other");
     }
 
-    function restartPrototype() {
+    function restartQuestionnaire() {
       document.getElementById("questionnaireForm").reset();
       clientSubmissionId = crypto.randomUUID();
-      document.getElementById("submissionReceipt").textContent = "Backend test only: this submission is stored with collection_mode = test and is excluded from the live-data export.";
+      document.getElementById("submissionReceipt").textContent = "Your response has not been submitted yet.";
       historyStack.splice(0, historyStack.length, "intro");
       document.querySelectorAll(".choice-card").forEach(card => {
         card.style.opacity = "1";
@@ -1795,7 +1781,7 @@
 
     document.getElementById("nextBtn").addEventListener("click", goNext);
     document.getElementById("backBtn").addEventListener("click", goBack);
-    document.getElementById("restartBtn").addEventListener("click", restartPrototype);
+    document.getElementById("restartBtn").addEventListener("click", restartQuestionnaire);
 
     document.querySelectorAll('input[name="situation"], input[name="consent"]').forEach(input => {
       input.addEventListener("change", updateBranchHint);

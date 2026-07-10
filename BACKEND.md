@@ -1,7 +1,7 @@
 # AEP questionnaire backend
 
-This repository currently contains a first-round, test-only Supabase integration.
-It is deliberately not a live research collection system yet.
+This repository contains the live Supabase integration for the formal AEP
+questionnaire.
 
 The backend is hosted in the dedicated Supabase project
 `AEP Workplace Wellbeing Questionnaire` (`yxhsrqfyxgcaikqnovrr`). The project is
@@ -16,7 +16,7 @@ separate from the Personal Training application and its data.
    honeypot field.
 4. The function inserts through its server-side service credential.
 5. `public.aep_questionnaire_responses` stores the row with
-   `collection_mode = test`.
+   `collection_mode = live`.
 
 The form never receives a service-role or secret key.
 
@@ -41,7 +41,7 @@ The form never receives a service-role or secret key.
 - A random `client_submission_id` makes retries idempotent. It is not a
   participant identifier and must not be used for participant profiling.
 
-## First-round verification completed
+## Verification completed
 
 - Dedicated-project migration preserved all three prior test rows; source and
   destination dataset fingerprints matched before the source table was removed.
@@ -54,9 +54,13 @@ The form never receives a service-role or secret key.
   only in the dedicated AEP project.
 - Direct public `SELECT`: rejected with HTTP 401.
 - Direct public `INSERT`: rejected with HTTP 401.
-- CORS preflight from the local test origin: HTTP 204.
+- CORS preflight from the GitHub Pages origin: HTTP 204.
 - Missing consent: rejected with HTTP 400.
-- `collection_mode = live`: rejected with HTTP 400.
+- `collection_mode = test`: rejected with HTTP 400 by the live endpoint.
+- Pre-release live canary: stored once with HTTP 201, duplicate retry returned
+  HTTP 200 without adding a second row, and the canary was removed afterward.
+- Localhost origin: rejected with HTTP 403 after the production allowlist was
+  restricted to the GitHub Pages host.
 - Browser student/B1 submission: stored successfully with ratings, `N/A`,
   multi-select values, ranking, and open text.
 - Professional/B2 submission: stored successfully.
@@ -66,7 +70,8 @@ The form never receives a service-role or secret key.
 - Consent refusal: reached the exit screen without creating a database row.
 - Integrity query: zero duplicate IDs, invalid consent rows, invalid routes, and
   selection-limit violations.
-- Live export query: zero rows, proving test data is excluded.
+- Live export query includes only `collection_mode = live` rows and excludes
+  the retained test records.
 
 ## Export
 
@@ -79,16 +84,17 @@ Keep the raw CSV immutable. Create any cleaned Excel workbook as a separate
 analysis copy, and store both only in the research storage location approved by
 the project data-management and ethics process.
 
-## Required before live collection
+## Operational checklist
 
 1. Confirm that the final participant information, consent wording, retention
    plan, Supabase processor/region, and export storage match the OREMS approval.
 2. Keep the dedicated AEP Supabase project and its administrator access separate
    from unrelated personal applications.
-3. Add production-grade bot and rate-limit protection, such as Turnstile, before
-   accepting a publicly distributed survey link.
-4. Remove local test origins from the Edge Function allowlist.
-5. Change both the frontend and Edge Function to `collection_mode = live` in a
-   reviewed release; never enable only one side.
-6. Clear or archive all test records, rerun the integrity query, submit a final
-   canary response, verify the CSV export, and then open recruitment.
+3. Monitor submission volume and Edge Function logs during recruitment; add
+   stronger bot protection such as Turnstile if traffic is opened more broadly
+   or abuse is observed.
+4. Keep the Edge Function origin allowlist restricted to the GitHub Pages host.
+5. Keep the frontend and Edge Function on the same questionnaire and collection
+   mode version.
+6. Run the integrity query before every export and keep test records excluded
+   from the live-data export.
