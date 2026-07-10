@@ -3,6 +3,10 @@
 This repository currently contains a first-round, test-only Supabase integration.
 It is deliberately not a live research collection system yet.
 
+The backend is hosted in the dedicated Supabase project
+`AEP Workplace Wellbeing Questionnaire` (`yxhsrqfyxgcaikqnovrr`). The project is
+separate from the Personal Training application and its data.
+
 ## Data flow
 
 1. The static questionnaire serializes the active branch and optional responses.
@@ -39,6 +43,15 @@ The form never receives a service-role or secret key.
 
 ## First-round verification completed
 
+- Dedicated-project migration preserved all three prior test rows; source and
+  destination dataset fingerprints matched before the source table was removed.
+- A new-project canary submission returned HTTP 201, and its retry returned
+  success without adding a duplicate row.
+- The Personal Training project no longer contains the AEP response table or
+  any AEP response rows.
+- The legacy Personal Training project function is an inert HTTP 410 migration
+  tombstone with no database access; the active questionnaire endpoint exists
+  only in the dedicated AEP project.
 - Direct public `SELECT`: rejected with HTTP 401.
 - Direct public `INSERT`: rejected with HTTP 401.
 - CORS preflight from the local test origin: HTTP 204.
@@ -70,8 +83,8 @@ the project data-management and ethics process.
 
 1. Confirm that the final participant information, consent wording, retention
    plan, Supabase processor/region, and export storage match the OREMS approval.
-2. Decide whether the AEP data must move into a dedicated Supabase project
-   instead of sharing the current database with unrelated personal applications.
+2. Keep the dedicated AEP Supabase project and its administrator access separate
+   from unrelated personal applications.
 3. Add production-grade bot and rate-limit protection, such as Turnstile, before
    accepting a publicly distributed survey link.
 4. Remove local test origins from the Edge Function allowlist.
