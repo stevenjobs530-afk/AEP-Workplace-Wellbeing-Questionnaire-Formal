@@ -644,6 +644,10 @@
       font-weight: 650;
     }
 
+    .honeypot {
+      display: none;
+    }
+
     .error-message {
       min-height: 24px;
       padding: 0 26px;
@@ -688,6 +692,12 @@
 
     .btn:hover {
       transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      cursor: wait;
+      opacity: 0.66;
+      transform: none;
     }
 
     .btn.primary {
@@ -862,16 +872,16 @@
 </head>
 <body>
   <main class="app-shell">
-    <aside class="side-panel" aria-label="Prototype overview">
+    <aside class="side-panel" aria-label="Questionnaire overview">
       <div>
         <div class="brand-mark">AEP</div>
         <h1>Early-Career Transition &amp; Workplace Wellbeing Questionnaire</h1>
         <p>An interactive questionnaire exploring job-search pressure, workplace connectedness, AI-related pressure, cross-cultural adjustment, and employer support needs.</p>
       </div>
-      <div class="side-metrics" aria-label="Prototype facts">
-        <div class="metric"><span>Mode</span><span>Wizard demo</span></div>
+      <div class="side-metrics" aria-label="Questionnaire facts">
+        <div class="metric"><span>Mode</span><span>Live questionnaire</span></div>
         <div class="metric"><span>Time</span><span>8-10 min</span></div>
-        <div class="metric"><span>Storage</span><span>None</span></div>
+        <div class="metric"><span>Storage</span><span>Secure submission</span></div>
       </div>
     </aside>
 
@@ -887,7 +897,10 @@
       </header>
 
       <div class="viewport">
-        <form id="questionnaireForm" novalidate>
+        <form id="questionnaireForm" novalidate autocomplete="off">
+          <div class="honeypot" aria-hidden="true">
+            <label>Leave this field empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+          </div>
           <section class="screen active" data-step="intro" data-title="Introduction">
             <div class="screen-header">
               <h2>Early-Career Transition &amp; Workplace Wellbeing Questionnaire</h2>
@@ -1239,7 +1252,7 @@
                   <p>For urgent mental health support in England, call NHS 111 and select the mental health option. If you or someone else is in immediate danger, call 999 or go to A&amp;E.</p>
                   <p>Participants outside the UK should contact an appropriate local healthcare, wellbeing, crisis, or emergency service.</p>
                 </aside>
-                <p class="footer-note">Prototype only: this page does not submit, transmit, store, or save responses. Refreshing or closing the browser clears the live demo state.</p>
+                <p class="footer-note" id="submissionReceipt">Your response has not been submitted yet.</p>
               </div>
             </div>
           </section>
@@ -1248,7 +1261,7 @@
 
       <div class="error-message" id="errorMessage" role="alert" aria-live="polite"></div>
       <footer class="actions">
-        <button class="btn ghost" type="button" id="restartBtn">Restart prototype</button>
+        <button class="btn ghost" type="button" id="restartBtn">Restart questionnaire</button>
         <div class="button-group">
           <button class="btn secondary" type="button" id="backBtn">Back</button>
           <button class="btn primary" type="button" id="nextBtn">Continue</button>
@@ -1258,6 +1271,10 @@
   </main>
 
   <script>
+    const SUBMISSION_ENDPOINT = "https://yxhsrqfyxgcaikqnovrr.supabase.co/functions/v1/submit-aep-questionnaire";
+    const QUESTIONNAIRE_VERSION = "formal-2026-07-10-v1";
+    const COLLECTION_MODE = "live";
+
     const steps = {
       intro: { next: "a" },
       a: { next: getBranchStep },
@@ -1272,6 +1289,8 @@
     const baseFlow = ["intro", "a", "b1", "b2", "c", "d", "e", "thanks"];
     const historyStack = ["intro"];
     let currentStep = "intro";
+    let clientSubmissionId = crypto.randomUUID();
+    let submissionInFlight = false;
 
     const b1Items = [
       "Overall, I expect the transition from education to employment to be challenging for my wellbeing.",
@@ -1433,6 +1452,98 @@
       return checked ? checked.value : "";
     }
 
+    function getCheckedValues(name) {
+      return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(input => input.value);
+    }
+
+    function getFieldValue(name) {
+      const field = document.querySelector(`[name="${name}"]`);
+      return field && typeof field.value === "string" ? field.value.trim() : "";
+    }
+
+    function collectRatings(prefix, count) {
+      const ratings = {};
+      for (let index = 1; index <= count; index += 1) {
+        const name = `${prefix}_${index}`;
+        const value = getCheckedValue(name);
+        if (value) ratings[name] = value === "N/A" ? value : Number(value);
+      }
+      return ratings;
+    }
+
+    function collectSubmissionPayload() {
+      const situation = getCheckedValue("situation");
+      const route = situation === "student" || situation === "recent"
+        ? "b1"
+        : situation === "professional" ? "b2" : "open";
+
+      return {
+        client_submission_id: clientSubmissionId,
+        questionnaire_version: QUESTIONNAIRE_VERSION,
+        collection_mode: COLLECTION_MODE,
+        consented: getCheckedValue("consent") === "agree",
+        situation,
+        route,
+        graduation_year: getCheckedValue("graduation_year") || null,
+        employment_status: getCheckedValue("employment_status") || null,
+        employment_other: getFieldValue("employment_other") || null,
+        industries: getCheckedValues("industry"),
+        industry_other: getFieldValue("industry_other") || null,
+        cross_cultural_transition: getCheckedValue("cross_cultural_transition") || null,
+        ai_expected_impact: getCheckedValue("ai_expected_impact") || null,
+        b1_ratings: route === "b1" ? collectRatings("B1", b1Items.length) : {},
+        b2_ratings: route === "b2" ? collectRatings("B2", b2Items.length) : {},
+        challenges: route === "open" ? [] : getCheckedValues("challenge"),
+        challenge_other: route === "open" ? null : getFieldValue("challenge_other") || null,
+        challenge_explanation: route === "open" ? null : getFieldValue("challenge_explanation") || null,
+        reasons: route === "open" ? [] : getCheckedValues("reason"),
+        reason_other: route === "open" ? null : getFieldValue("reason_other") || null,
+        support_options: route === "open" ? [] : getCheckedValues("support"),
+        support_other: route === "open" ? null : getFieldValue("support_other") || null,
+        support_rank_1: route === "open" ? null : getFieldValue("rank_1") || null,
+        support_rank_2: route === "open" ? null : getFieldValue("rank_2") || null,
+        support_rank_3: route === "open" ? null : getFieldValue("rank_3") || null,
+        d3_ratings: route === "open" ? {} : collectRatings("D3", d3Items.length),
+        useful_support: route === "open" ? null : getFieldValue("useful_support") || null,
+        mentoring_support: route === "open" ? null : getFieldValue("mentoring_support") || null,
+        employer_understanding: getFieldValue("employer_understanding") || null,
+        final_comments: getFieldValue("ai_culture_relocation_support") || null,
+        website: getFieldValue("website"),
+      };
+    }
+
+    async function submitQuestionnaire() {
+      if (submissionInFlight) return false;
+      submissionInFlight = true;
+      updateActionButtons();
+      setError("Submitting your response securely...");
+
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 15000);
+      try {
+        const response = await fetch(SUBMISSION_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(collectSubmissionPayload()),
+          signal: controller.signal,
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || result.ok !== true) throw new Error(result.error || "SUBMISSION_FAILED");
+        document.getElementById("submissionReceipt").textContent = `Your response was submitted successfully. Reference: ${result.reference}.`;
+        return true;
+      } catch (error) {
+        const message = error && error.name === "AbortError"
+          ? "The submission timed out. Please check your connection and try again."
+          : "Your response could not be saved. No completion has been recorded; please try again.";
+        setError(message);
+        return false;
+      } finally {
+        window.clearTimeout(timeout);
+        submissionInFlight = false;
+        updateActionButtons();
+      }
+    }
+
     function getBranchStep() {
       const consent = getCheckedValue("consent");
       const situation = getCheckedValue("situation");
@@ -1477,7 +1588,7 @@
         return true;
       }
       if (!situation) {
-        setError("Please select your current situation so the prototype can route the next section.");
+        setError("Please select your current situation so the questionnaire can route the next section.");
         return false;
       }
       return true;
@@ -1485,7 +1596,8 @@
 
     function prepareExitThanks() {
       document.getElementById("thanksTitle").textContent = "Thank you.";
-      document.getElementById("thanksBody").textContent = "You selected that you do not wish to take part. In a live questionnaire, this would end the survey without collecting further responses.";
+      document.getElementById("thanksBody").textContent = "You selected that you do not wish to take part. The questionnaire has ended without collecting a response.";
+      document.getElementById("submissionReceipt").textContent = "No response was submitted or stored.";
     }
 
     function prepareCompletionThanks() {
@@ -1525,9 +1637,12 @@
     }
 
     function updateActionButtons() {
-      document.getElementById("backBtn").disabled = historyStack.length <= 1;
+      document.getElementById("backBtn").disabled = historyStack.length <= 1 || submissionInFlight;
       document.getElementById("backBtn").style.visibility = historyStack.length <= 1 ? "hidden" : "visible";
-      document.getElementById("nextBtn").textContent = currentStep === "e" ? "Finish" : "Continue";
+      document.getElementById("nextBtn").disabled = submissionInFlight;
+      document.getElementById("nextBtn").textContent = submissionInFlight
+        ? "Submitting..."
+        : currentStep === "e" ? "Submit response" : "Continue";
       document.getElementById("nextBtn").style.display = currentStep === "thanks" ? "none" : "inline-flex";
     }
 
@@ -1535,8 +1650,12 @@
       document.getElementById("errorMessage").textContent = message;
     }
 
-    function goNext() {
+    async function goNext() {
       if (!validateStep(currentStep)) return;
+      if (currentStep === "e" && getCheckedValue("consent") === "agree") {
+        const saved = await submitQuestionnaire();
+        if (!saved) return;
+      }
       const rule = steps[currentStep];
       const next = typeof rule.next === "function" ? rule.next() : rule.next;
       if (next) showStep(next);
@@ -1560,8 +1679,8 @@
         hint.textContent = "Next: Section B2, focused on actual early-career experience.";
         openCommentLead.textContent = "Before closing, you may add final comments about your early-career transition, workplace wellbeing, AI-related pressure, cross-cultural adjustment, or employer support.";
       } else if (situation === "none") {
-        hint.textContent = "Next: optional open comment section, then the prototype closes.";
-        openCommentLead.textContent = "Because you selected None of the above, the prototype skips the main questionnaire and offers only this optional comment section.";
+        hint.textContent = "Next: optional open comment section, then the questionnaire closes.";
+        openCommentLead.textContent = "Because you selected None of the above, the questionnaire skips the main sections and offers only this optional comment section.";
       } else {
         hint.textContent = "Choose a situation to see the next section.";
       }
@@ -1625,8 +1744,10 @@
       updateOtherTextbox("support", "Other, please specify", "support_other");
     }
 
-    function restartPrototype() {
+    function restartQuestionnaire() {
       document.getElementById("questionnaireForm").reset();
+      clientSubmissionId = crypto.randomUUID();
+      document.getElementById("submissionReceipt").textContent = "Your response has not been submitted yet.";
       historyStack.splice(0, historyStack.length, "intro");
       document.querySelectorAll(".choice-card").forEach(card => {
         card.style.opacity = "1";
@@ -1651,9 +1772,16 @@
     buildCheckboxGrid("reasons", "reason", reasons);
     buildCheckboxGrid("supportOptions", "support", support);
 
+    document.querySelectorAll("textarea").forEach(textarea => {
+      textarea.maxLength = 4000;
+    });
+    document.querySelectorAll("input.inline-other").forEach(input => {
+      input.maxLength = 240;
+    });
+
     document.getElementById("nextBtn").addEventListener("click", goNext);
     document.getElementById("backBtn").addEventListener("click", goBack);
-    document.getElementById("restartBtn").addEventListener("click", restartPrototype);
+    document.getElementById("restartBtn").addEventListener("click", restartQuestionnaire);
 
     document.querySelectorAll('input[name="situation"], input[name="consent"]').forEach(input => {
       input.addEventListener("change", updateBranchHint);
